@@ -1,0 +1,22 @@
+bag_to_csv_node:
+  ros__parameters:
+    packages_to_register: # All the messages are registered
+      - plansys2_msgs
+    extractors_to_import:
+      - action_execution_info_extractor
+      - plan_execution_info_extractor
+
+    plansys2_msgs: msg # The messages are registered in the msg folder
+
+    action_execution_info_extractor:
+      package_name: "plansys2_data_collector"
+      module_name: "action_execution_info_extractor"
+      class_name: "ActionExecutionInfoExtractor"
+      topics: ["action_execution_data_collection"]
+
+    plan_execution_info_extractor:
+      package_name: "plansys2_data_collector"
+      module_name: "plan_execution_info_extractor"
+      class_name: "PlanExecutionInfoExtractor"  
+      topics: ["plan_execution_data_collection"]
+
