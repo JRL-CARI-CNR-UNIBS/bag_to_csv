@@ -1,14 +1,10 @@
 import rclpy
 from rclpy.node import Node
-from rosbags.rosbag2 import Reader
 from rosbags.highlevel import AnyReader
 from rosbags.typesys import Stores, get_typestore, get_types_from_msg
-# from plansys2_msgs.msg import ActionExecutionDataCollection, PlanExecutionDataCollection
 from pathlib import Path
 import sys
-from builtin_interfaces.msg import Time
 import pandas as pd
-# from rosidl_runtime_py.convert import get_message_slot_types, message_to_csv
 from ament_index_python.packages import get_package_share_directory, PackageNotFoundError
 import importlib
 
