@@ -102,7 +102,6 @@ class BagToCsvNode(Node):
         data = []
         for connection, timestamp, rawdata in reader.messages(connections=connections):
             msg = self.typestore.deserialize_cdr(rawdata, connection.msgtype)
-            # extract_info_from_msg(msg, connection.msgtype)
             data.append(
                 self._extract_info_from_msg(msg, connection.msgtype)
             )
@@ -111,13 +110,16 @@ class BagToCsvNode(Node):
     def convert_bag_to_csv(self, bag_file_path, csv_file_path):
         with AnyReader([Path(bag_file_path)]) as reader:
             for topic_name in self.topics:
-                topic_connections = [x for x in reader.connections if x.topic == topic_name]
-                topic_data = self._extract_data(reader, topic_connections)
-                df = pd.DataFrame(topic_data)
-                print(f'{csv_file_path}exported_{topic_name}.csv')
-                df.to_csv(f'{csv_file_path}exported_{topic_name}.csv', index=False)
-                self.get_logger().info(f'CSV file created for {topic_name}: {csv_file_path}')
-    
+                topic_connections = [x for x in reader.connections if x.topic == f'/{topic_name}']
+                if topic_connections:    
+                    topic_data = self._extract_data(reader, topic_connections)
+                    df = pd.DataFrame(topic_data)
+                    print(f'{csv_file_path}exported_{topic_name}.csv')
+                    df.to_csv(f'{csv_file_path}exported_{topic_name}.csv', index=False)
+                    self.get_logger().info(f'CSV file created for {topic_name}: {csv_file_path}')
+                else:
+                    self.get_logger().error(f'Topic {topic_name} not found in the bag file.')
+
 def main(args=None):
     rclpy.init(args=args)
     node = BagToCsvNode()
