@@ -24,7 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'bag_to_csv_node = bag_to_csv.bag_to_csv:main'
+            'bag_to_csv_node = bag_to_csv.bag_to_csv:main',
+            'bag_analyzer_node = bag_to_csv.bag_analyzer:main'
     ],
     },
 )

@@ -31,3 +31,6 @@ class InfoExtractor(ABC):
     @abstractmethod
     def extract_info_from_msg(self, msg, msg_type):
         pass
+
+    def analyze_data(self, msg, msg_type):
+        pass
