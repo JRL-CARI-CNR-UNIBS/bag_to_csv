@@ -1,0 +1,7 @@
+bag\_to\_csv.bag\_analyzer module
+=================================
+
+.. automodule:: bag_to_csv.bag_analyzer
+   :members:
+   :undoc-members:
+   :show-inheritance:

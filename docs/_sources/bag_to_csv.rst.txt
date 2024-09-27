@@ -1,0 +1,20 @@
+bag\_to\_csv package
+====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   bag_to_csv.bag_analyzer
+   bag_to_csv.bag_to_csv
+   bag_to_csv.info_extractor
+
+Module contents
+---------------
+
+.. automodule:: bag_to_csv
+   :members:
+   :undoc-members:
+   :show-inheritance:
