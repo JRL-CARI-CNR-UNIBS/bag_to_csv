@@ -53,6 +53,8 @@ class BagToCsvNode(Node):
         self.info_extractors = {}
         self.topics = []
         for extractor in extractors_to_import:
+            if extractor == '':
+                continue
             self.declare_parameter(f'{extractor}.package_name', '')
             self.declare_parameter(f'{extractor}.module_name', '')
             self.declare_parameter(f'{extractor}.class_name', '')
@@ -81,6 +83,8 @@ class BagToCsvNode(Node):
     
     def register_message_types(self, packages_to_register):
         for package in packages_to_register:
+            if package == '':
+                continue
             try:
                 package_share_directory = get_package_share_directory(package)
             except (PackageNotFoundError, ValueError) as exception:
@@ -114,8 +118,9 @@ class BagToCsvNode(Node):
                 if topic_connections:    
                     topic_data = self._extract_data(reader, topic_connections)
                     df = pd.DataFrame(topic_data)
-                    print(f'{csv_file_path}exported_{topic_name}.csv')
-                    df.to_csv(f'{csv_file_path}exported_{topic_name}.csv', index=False)
+                    topic_name_formatted = topic_name.replace('/', '_')
+                    print(f'{csv_file_path}exported_{topic_name_formatted}.csv')
+                    df.to_csv(f'{csv_file_path}exported_{topic_name_formatted}.csv', index=False)
                     self.get_logger().info(f'CSV file created for {topic_name}: {csv_file_path}')
                 else:
                     self.get_logger().error(f'Topic {topic_name} not found in the bag file.')
