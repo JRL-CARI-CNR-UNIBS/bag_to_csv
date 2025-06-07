@@ -42,14 +42,14 @@ class BagToCsvNode(Node):
         if not bag_file_path or not csv_file_path:
             self.get_logger().error('Both bag_file_path and csv_file_path parameters are required.')
             sys.exit(1)
-        
+
         self.typestore = get_typestore(Stores.ROS2_HUMBLE)
         try:
             self.register_message_types(packages_to_register)
         except Exception as e:
             self.get_logger().error(f'Error registering message types: {e}')
             sys.exit(1)
-        
+
         self.info_extractors = {}
         self.topics = []
         for extractor in extractors_to_import:
@@ -66,7 +66,7 @@ class BagToCsvNode(Node):
 
             topics_name = self._get_param(f'{extractor}.topics').string_array_value
             self.topics.extend(topics_name)
-            
+
             try:
                 module = importlib.import_module(f'{package_name}.{module_name}')
                 if extractor not in self.info_extractors:
@@ -77,10 +77,10 @@ class BagToCsvNode(Node):
                 sys.exit(1)
 
         self.convert_bag_to_csv(bag_file_path, csv_file_path)
-    
+
     def _get_param(self, param_name):
         return self.get_parameter(param_name).get_parameter_value()
-    
+
     def register_message_types(self, packages_to_register):
         for package in packages_to_register:
             if package == '':
@@ -91,7 +91,7 @@ class BagToCsvNode(Node):
                 raise exception
             self.declare_parameter(package, 'msg')
             msgs_folder = self._get_param(package).string_value
-            msgs_folder_path = Path(f'{package_share_directory}/{msgs_folder}') 
+            msgs_folder_path = Path(f'{package_share_directory}/{msgs_folder}')
 
             for msg_file_path in msgs_folder_path.glob('*.msg'):
                 msg_name = msg_file_path.stem
@@ -101,7 +101,7 @@ class BagToCsvNode(Node):
 
     def _extract_info_from_msg(self, msg, msg_type):
         return self.info_extractors[msg_type].extract_info_from_msg(msg, msg_type)
-    
+
     def _extract_data(self, reader, connections):
         data = []
         for connection, timestamp, rawdata in reader.messages(connections=connections):
@@ -109,13 +109,14 @@ class BagToCsvNode(Node):
             data.append(
                 self._extract_info_from_msg(msg, connection.msgtype)
             )
+            data[-1]['bag_timestamp'] = timestamp
         return data
-    
+
     def convert_bag_to_csv(self, bag_file_path, csv_file_path):
         with AnyReader([Path(bag_file_path)]) as reader:
             for topic_name in self.topics:
                 topic_connections = [x for x in reader.connections if x.topic == f'/{topic_name}']
-                if topic_connections:    
+                if topic_connections:
                     topic_data = self._extract_data(reader, topic_connections)
                     df = pd.DataFrame(topic_data)
                     topic_name_formatted = topic_name.replace('/', '_')
@@ -128,7 +129,7 @@ class BagToCsvNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = BagToCsvNode()
-    
+
     node.destroy_node()
     rclpy.shutdown()
 
