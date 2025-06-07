@@ -1,0 +1,5 @@
+packages:
+  - std_msgs
+  - geometry_msgs
+  - nav_msgs
+  - moveit_msgs

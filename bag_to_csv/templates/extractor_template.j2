@@ -1,0 +1,22 @@
+from {{ import_pkg }} import {{ msg_name }}
+from bag_to_csv.info_extractor import InfoExtractor
+
+class {{ class_name }}(InfoExtractor):
+    def __init__(self):
+        super().__init__({{ type_str | tojson }})
+
+    def extract_info_from_msg(self, msg, msg_type):
+        self._check_msg_type(msg_type)
+{%- for field in fields %}
+    {%- if field.expr is defined %}
+        {{ field.var }} = {{ field.expr }}
+    {%- else %}
+        {{ field.var }} = msg{% for p in field.attr %}.{{ p }}{% endfor %}
+    {%- endif %}
+{%- endfor %}
+
+        return {
+{%- for field in fields %}
+            "{{ field.var }}": {{ field.var }}{% if not loop.last %},{% endif %}
+{%- endfor %}
+        }
